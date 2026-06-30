@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Atasözü Bilmece · Kahverengi Kutular</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            width: 100%;
+            background: #0a1a2f;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .defter {
+            width: 100%;
+            max-width: 820px;
+            height: 94vh;
+            max-height: 780px;
+            background: linear-gradient(160deg, #e2edf7 0%, #c5d9ed 60%, #a8c4e0 100%);
+            border-radius: 2px 16px 16px 2px;
+            box-shadow: -6px 0 0 #2a5f8a, 0 0 0 3px #4a8ab5, 6px 12px 48px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .defter::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(transparent, transparent 34px, rgba(30, 80, 140, 0.08) 34px, rgba(30, 80, 140, 0.08) 35px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .defter::after {
+            content: '';
+            position: absolute;
+            left: 44px;
+            top: 0; bottom: 0;
+            width: 1.6px;
+            background: rgba(40, 80, 150, 0.2);
+            z-index: 1;
+        }
+
+        .baslik {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px 6px 20px;
+            border-bottom: 1.5px solid rgba(40, 80, 150, 0.2);
+            background: rgba(210, 230, 250, 0.5);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .sol {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .etiket {
+            background: rgba(30, 70, 130, 0.1);
+            border: 1px solid rgba(40, 80, 150, 0.3);
+            border-radius: 30px;
+            padding: 2px 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1a3a6a;
+            letter-spacing: 0.3px;
+        }
+
+        .puan-etiketi {
+            background: #1a4a7a;
+            color: #c0dff5;
+            border-color: #3a7aaa;
+        }
+
+        .sag {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ses-btn {
+            background: #1a5a8a;
+            border: none;
+            color: #e0f0ff;
+            font-size: 0.78rem;
+            padding: 5px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: inherit;
+            transition: 0.12s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .ses-btn:hover { background: #2a7aaa; }
+        .ses-btn:active { transform: scale(0.95); }
+
+        .sifirla-btn {
+            background: transparent;
+            border: 1px solid rgba(40, 80, 150, 0.4);
+            color: #1a3a6a;
+            border-radius: 30px;
+            padding: 4px 14px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .sifirla-btn:hover { background: rgba(40, 80, 150, 0.12); }
+
+        .govde {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 14px 8px 52px;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .deyim-alani {
+            flex: 0 0 48%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px 6px 8px 0;
+            border-bottom: 1.5px solid rgba(40, 80, 150, 0.15);
+            min-height: 0;
+        }
+
+        .deyim-baslik {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #2a5a8a;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0.75;
+        }
+
+        .anlam-metin {
+            font-family: 'Segoe UI', 'Georgia', serif;
+            font-size: clamp(1.2rem, 2.8vh, 2rem);
+            font-weight: 600;
+            color: #0a1a3a;
+            line-height: 1.5;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .ornek-metin {
+            font-size: clamp(0.85rem, 1.6vh, 1.15rem);
+            font-weight: 400;
+            color: #2a4a6a;
+            margin-top: 6px;
+            font-style: italic;
+            opacity: 0.8;
+            border-left: 3px solid rgba(40, 80, 150, 0.3);
+            padding-left: 12px;
+        }
+
+        .soru-alani {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 0 6px;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .soru-etiket {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1a3a6a;
+            margin-bottom: 8px;
+            opacity: 0.85;
+        }
+
+        .secenekler {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .sec-btn {
+            background: #6b4f3a;
+            border: 2px solid #4d3526;
+            border-radius: 50px;
+            padding: 0 18px;
+            min-height: 42px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #f5ede6;
+            cursor: pointer;
+            text-align: center;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            transition: 0.15s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 0 #3a281e;
+        }
+        .sec-btn:hover:not([disabled]) {
+            background: #7d5d45;
+            border-color: #5a3f2e;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 0 #3a281e;
+        }
+        .sec-btn:active:not([disabled]) {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #3a281e;
+        }
+        .sec-btn.dogru {
+            background: #1e7a3a !important;
+            border-color: #2e9a4a !important;
+            color: #e8ffe8 !important;
+            box-shadow: 0 0 20px rgba(46, 200, 80, 0.5);
+        }
+        .sec-btn.yanlis {
+            background: #8a2a1a !important;
+            border-color: #cc3a2a !important;
+            color: #ffe0d8 !important;
+            box-shadow: 0 0 20px rgba(200, 50, 30, 0.5);
+        }
+        .sec-btn[disabled] { 
+            cursor: default; 
+            transform: none !important;
+            box-shadow: 0 4px 0 #3a281e !important;
+        }
+
+        .alt-cubuk {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 16px 8px 52px;
+            border-top: 1.5px solid rgba(40, 80, 150, 0.2);
+            background: rgba(210, 230, 250, 0.35);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .geri-bildirim {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #1a3a6a;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sonraki-btn {
+            background: linear-gradient(135deg, #1a5a8a, #3a8aba);
+            border: none;
+            padding: 7px 22px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #e8f4ff;
+            cursor: pointer;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            box-shadow: 0 3px 0 #0a3a5a, 0 4px 14px rgba(0,0,0,0.2);
+            transition: 0.1s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .sonraki-btn:hover { background: linear-gradient(135deg, #2a6a9a, #4a9aca); }
+        .sonraki-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #0a3a5a; }
+        .sonraki-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        @media (max-height: 640px) {
+            .anlam-metin { font-size: clamp(1rem, 2.2vh, 1.4rem); }
+            .ornek-metin { font-size: clamp(0.7rem, 1.2vh, 0.9rem); }
+            .sec-btn { min-height: 34px; font-size: 0.78rem; padding: 0 12px; }
+            .deyim-alani { flex: 0 0 42%; }
+        }
+
+        @media (max-height: 500px) {
+            .anlam-metin { font-size: 0.9rem; }
+            .sec-btn { min-height: 30px; font-size: 0.7rem; }
+            .govde { padding-left: 44px; }
+            .defter::after { left: 36px; }
+        }
+
+        @media (min-width: 700px) {
+            .govde { padding-left: 64px; }
+            .defter::after { left: 52px; }
+        }
+
+        @keyframes confetti-fall {
+            0% { opacity: 0; transform: translateY(-10px) rotate(0deg); }
+            10% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(calc(80vh)) rotate(720deg); }
+        }
+
+        @keyframes sad-fall {
+            0% { opacity: 0; transform: scale(0.3) rotate(-20deg); }
+            20% { opacity: 1; transform: scale(1.1) rotate(5deg); }
+            40% { transform: scale(0.95) rotate(-5deg); }
+            60% { opacity: 1; transform: scale(1) rotate(0deg); }
+            100% { opacity: 0; transform: scale(0.8) rotate(10deg) translateY(60px); }
+        }
+
+        .efect-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .efect-piece {
+            position: absolute;
+            top: 20%;
+            animation-duration: 1.8s;
+            animation-timing-function: ease-out;
+            animation-fill-mode: forwards;
+            font-size: 2.2rem;
+        }
+
+        .efect-piece.confetti {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            animation-name: confetti-fall;
+        }
+
+        .efect-piece.sad {
+            animation-name: sad-fall;
+            font-size: 3.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="defter">
+
+    <div class="baslik">
+        <div class="sol">
+            <span class="etiket">📖 <span id="soruNo">1</span>/<span id="toplamSoru">10</span></span>
+            <span class="etiket puan-etiketi">⭐ <span id="puan">0</span> puan</span>
+        </div>
+        <div class="sag">
+            <button class="ses-btn" id="sesBtn">🔊 Oku</button>
+            <button class="sifirla-btn" id="sifirlaBtn">🔄 Yeni Set</button>
+        </div>
+    </div>
+
+    <div class="govde">
+
+        <div class="deyim-alani">
+            <div class="deyim-baslik">📝 Açıklama · Örnek</div>
+            <div class="anlam-metin" id="anlamMetin"></div>
+            <div class="ornek-metin" id="ornekMetin"></div>
+        </div>
+
+        <div class="soru-alani">
+            <div class="soru-etiket">🌙 Bu açıklamaya uygun atasözü hangisidir?</div>
+            <div class="secenekler" id="secenekKutu"></div>
+        </div>
+
+    </div>
+
+    <div class="alt-cubuk">
+        <div class="geri-bildirim" id="geriBildirim">💡 Bir seçenek seçin</div>
+        <button class="sonraki-btn" id="sonrakiBtn">⏩ Sonraki</button>
+    </div>
+
+</div>
+
+<script>
+    // ─── TÜM ATASÖZLERİ ─────────────────────────────────────────────
+    const ATASOZLERI = [
+        { deyim: "Ağır kazan geç kaynar", anlam: "Sabırlı ve sakin insan kolay öfkelenmez, geç tepki verir.", ornek: "O, her zaman ağır kazan geç kaynar misali soğukkanlıdır." },
+        { deyim: "Akacak kan damarda durmaz", anlam: "Olması kaçınılmaz olan şey mutlaka gerçekleşir.", ornek: "Ne yapsak boş, akacak kan damarda durmaz." },
+        { deyim: "Altının yere düşmesiyle pul olmaz", anlam: "Değerli insan ya da şey, kötü durumda olsa da değerini kaybetmez.", ornek: "O, altının yere düşmesiyle pul olmaz misali hep saygındır." },
+        { deyim: "Ağılda oğlak doğsa ovada otu ısırıcı", anlam: "Her canlı kendi rızkıyla dünyaya gelir.", ornek: "Merak etme, ağılda oğlak doğsa ovada otu ısırıcı." },
+        { deyim: "Almaya taş atan çok olur", anlam: "Güzel ve değerli şeyler kıskanılır, eleştirilir.", ornek: "Başarılı olunca almaya taş atan çok oldu." },
+        { deyim: "Araba devrilince yol gösteren çok olur", anlam: "İş bozulduktan sonra akıl veren çok çıkar.", ornek: "İş battı, şimdi araba devrilince yol gösteren çok olur misali herkes akıl veriyor." },
+        { deyim: "Arpa eken buğday biçmez", anlam: "Ne ekersen onu biçersin.", ornek: "Arpa eken buğday biçmez, yaptıklarının karşılığını alırsın." },
+        { deyim: "At olacak tay yürüyüşünden belli olur", anlam: "Bir kişinin gelecekteki başarısı küçük yaşta belli olur.", ornek: "At olacak tay yürüyüşünden belli olur, bu çocuk ileride çok başarılı olacak." },
+        { deyim: "Atın en iyisi doru, yiğidin en iyisi deli olur", anlam: "Cesur ve atılgan kişiler daha çok dikkat çeker.", ornek: "Atın en iyisi doru, yiğidin en iyisi deli olur; o hep cesurdu." },
+        { deyim: "Avcı ne kadar hile bilse ayı o kadar yol bilir", anlam: "Her kurnazlığa karşı karşı tarafta da bir tedbir vardır.", ornek: "Onu kandırmak zor, avcı ne kadar hile bilse ayı o kadar yol bilir." },
+        { deyim: "Baba malı tezgâh, evlat malı kazançtır", anlam: "Hazır miras çabuk tükenir, insan kendi emeğiyle kazanmalıdır.", ornek: "Baba malı tezgâh, evlat malı kazançtır; çalışarak kazanmak daha kalıcı." },
+        { deyim: "Bağa bak üzüm olsun, yemeye yüzün olsun", anlam: "Bir şeyden sonuç almak istiyorsan ona emek vermelisin.", ornek: "Bağa bak üzüm olsun, yemeye yüzün olsun; bu işe emek vermelisin." },
+        { deyim: "Bal bal demekle ağız tatlanmaz", anlam: "Sadece konuşmakla iş bitmez, eylem gerekir.", ornek: "Bal bal demekle ağız tatlanmaz, haydi çalışalım." },
+        { deyim: "Bal tutan parmağını yalar", anlam: "Bir işle uğraşan ondan az da olsa faydalanır.", ornek: "Bu işte çalışan herkes bal tutan parmağını yalar gibi biraz kazanıyor." },
+        { deyim: "Bekâr gözüyle kız alınmaz", anlam: "Önemli kararlar sadece dış görünüşe bakılarak verilmemelidir.", ornek: "Bekâr gözüyle kız alınmaz, iyice araştırmalısın." },
+        { deyim: "Bıçak yarası geçer, dil yarası geçmez", anlam: "Sözle kırılan kalp kırıklığı kolay iyileşmez.", ornek: "Bıçak yarası geçer, dil yarası geçmez; sözlerine dikkat et." },
+        { deyim: "Bir çiçekle yaz olmaz", anlam: "Tek bir olumlu durum her şeyin düzeldiği anlamına gelmez.", ornek: "Bir çiçekle yaz olmaz, daha çok çalışmalıyız." },
+        { deyim: "Bir çöplükte iki horoz ötmez", anlam: "Aynı yerde iki güçlü kişi kolay anlaşamaz.", ornek: "Bir çöplükte iki horoz ötmez, ikisi de patronluk taslıyor." },
+        { deyim: "Bir fincan kahvenin kırk yıl hatırı vardır", anlam: "Küçük bir iyilik bile uzun süre unutulmaz.", ornek: "Bana yaptığın iyiliği unutmadım, bir fincan kahvenin kırk yıl hatırı vardır." },
+        { deyim: "Bir karga ile kış gelmez", anlam: "Tek bir belirtiyle kesin bir sonuca varılamaz.", ornek: "Erken gelen soğuk için bir karga ile kış gelmez, bekle biraz." },
+        { deyim: "Bir mıh bir nal kurtarır, bir nal bir at kurtarır", anlam: "Küçük bir şey büyük sonuçlar doğurabilir.", ornek: "Bir mıh bir nal kurtarır, bir nal bir at kurtarır; küçük detaylara dikkat et." },
+        { deyim: "Bir pire için yorgan yakılmaz", anlam: "Küçük bir sorun için büyük fedakârlık yapılmaz.", ornek: "Bir pire için yorgan yakılmaz, bu kadar önemsiz bir şey için neden tartışıyorsun?" },
+        { deyim: "Borç yiğidin kamçısıdır", anlam: "Borç insanı çalışmaya zorlar.", ornek: "Borç yiğidin kamçısıdır, çalışıp ödemek zorundayız." },
+        { deyim: "Buğday başak verince orak pahaya çıkar", anlam: "Bir şeye ihtiyaç artınca değeri de artar.", ornek: "Buğday başak verince orak pahaya çıkar, şimdi herkes onu istiyor." },
+        { deyim: "Büyük lokma ye, büyük söz söyleme", anlam: "Yapamayacağın şeyler için iddialı konuşma.", ornek: "Büyük lokma ye, büyük söz söyleme; önce yapabileceğini konuş." },
+        { deyim: "Dakikada çıkmaz can, umut kesilmez", anlam: "Son ana kadar umut vardır.", ornek: "Dakikada çıkmaz can, umut kesilmez; henüz her şey bitmedi." },
+        { deyim: "Dağ dağa kavuşmaz, insan insana kavuşur", anlam: "İnsanlar bir gün mutlaka yeniden karşılaşır.", ornek: "Dağ dağa kavuşmaz, insan insana kavuşur; belki bir gün yine karşılaşırız." },
+        { deyim: "Deveyi yardan uçuran bir tutam ottur", anlam: "Küçük bir istek ya da kavga büyük zarara yol açabilir.", ornek: "Deveyi yardan uçuran bir tutam ottur; o kadar basit bir şey yüzünden her şey bitti." },
+        { deyim: "Dibi görünmeyen sudan geçilmez", anlam: "Sonucu bilinmeyen işe girilmez.", ornek: "Dibi görünmeyen sudan geçilmez; bu iş çok riskli." },
+        { deyim: "Dolu küpün sesi çıkmaz", anlam: "Bilgili ve olgun insanlar övünmez.", ornek: "Dolu küpün sesi çıkmaz; o çok bilgili ama asla övünmez." },
+        { deyim: "Duvarı nem, insanı gam yıkar", anlam: "Üzüntü insanı içten içe yıpratır.", ornek: "Duvarı nem, insanı gam yıkar; üzülme, kendine iyi bak." },
+        { deyim: "El kazanı ile aş kaynamaz", anlam: "Başkasının imkânıyla kalıcı iş yapılamaz.", ornek: "El kazanı ile aş kaynamaz; kendi ayakların üzerinde durmalısın." },
+        { deyim: "Eski dost düşman olmaz", anlam: "Gerçek dostluk kolay bozulmaz.", ornek: "Eski dost düşman olmaz; onunla barışmalısın." },
+        { deyim: "Eşeğe altın semer vursalar eşek yine eşektir", anlam: "Değersiz kişi dış süsle değişmez.", ornek: "Eşeğe altın semer vursalar eşek yine eşektir; o ne giyerse giysin hâlâ aynı." },
+        { deyim: "Eşek hoşaftan ne anlar", anlam: "Değeri bilmeyen kişi güzel şeyi anlamaz.", ornek: "Eşek hoşaftan ne anlar; ona anlatmak boşa kürek çekmek." },
+        { deyim: "Fırsat geç vakitten geçirmez", anlam: "Uygun zamanda iş yapılmalıdır.", ornek: "Fırsat geç vakitten geçirmez; hemen karar vermelisin." },
+        { deyim: "Geç olsun da güç olmasın", anlam: "Bir iş geç olsun ama zor ve sıkıntılı olmasın.", ornek: "Geç olsun da güç olmasın; düzgün olsun yeter." },
+        { deyim: "Gelin ata binmiş ya nasip demiş", anlam: "Her şey hazır olsa bile sonuç belli değildir.", ornek: "Gelin ata binmiş ya nasip demiş; her şeyimiz var ama hayırlısı neyse o olsun." },
+        { deyim: "Geniş büyüyen dar gezer, dar büyüyen geniş gezer", anlam: "Bollukta tutumlu olan darlıkta rahat eder.", ornek: "Geniş büyüyen dar gezer, dar büyüyen geniş gezer; ihtiyatlı harcamak lazım." },
+        { deyim: "Göz görmeyince gönül katlanır", anlam: "Görmediğimiz şeye daha kolay dayanırız.", ornek: "Göz görmeyince gönül katlanır; uzak olunca unutuyor insan." },
+        { deyim: "Gün doğmadan neler doğar", anlam: "Zaman içinde beklenmedik gelişmeler olabilir.", ornek: "Gün doğmadan neler doğar; henüz her şey değişebilir." },
+        { deyim: "Güvenme varlığa düşersin darlığa", anlam: "Zenginliğe fazla güvenme, bir gün zor duruma düşebilirsin.", ornek: "Güvenme varlığa düşersin darlığa; tedbirli olmakta fayda var." },
+        { deyim: "Hamama giren terler", anlam: "Bir işe giren zorluklarına katlanmalıdır.", ornek: "Hamama giren terler; bu işin zorluklarını kabul etmelisin." },
+        { deyim: "Her ağaçtan kaşık olmaz", anlam: "Her şey her işe uygun değildir.", ornek: "Her ağaçtan kaşık olmaz; onu bu işe koşma." },
+        { deyim: "Her horoz kendi çöplüğünde öter", anlam: "İnsan kendi bildiği yerde daha rahat davranır.", ornek: "Her horoz kendi çöplüğünde öter; o kendi iş yerinde daha atak." },
+        { deyim: "Her sakaldan bir tel çekseler köseye sakal olur", anlam: "Herkes az katkı verse büyük iş olur.", ornek: "Her sakaldan bir tel çekseler köseye sakal olur; hep birlikte yapalım." },
+        { deyim: "Irmak'ta çeşme yapılmaz", anlam: "Zaten bol olan yere aynı şey gerekmez.", ornek: "Irmak'ta çeşme yapılmaz; burada herkes zaten zengin." },
+        { deyim: "Isıracak köpek dişini göstermez", anlam: "Gerçekten zarar verecek kişi bunu belli etmez.", ornek: "Isıracak köpek dişini göstermez; o çok sinsidir." },
+        { deyim: "İki karpuz bir koltuğa sığmaz", anlam: "İki büyük iş aynı anda yürütülemez.", ornek: "İki karpuz bir koltuğa sığmaz; ya birini seç ya da işleri böl." },
+        { deyim: "İki testi tokuşunca biri kırılır", anlam: "İki kişi çatışırsa biri zarar görür.", ornek: "İki testi tokuşunca biri kırılır; bu kavgadan biriniz zararlı çıkacak." },
+        { deyim: "İyi evlat babayı vezir eder, kötü evlat rezil eder", anlam: "Çocuk ailesini yüceltir ya da utandırır.", ornek: "İyi evlat babayı vezir eder, kötü evlat rezil eder; çocuklarına iyi bak." },
+        { deyim: "Karga kekliği taklit edeyim derken kendi yürüyüşüne şaşmış", anlam: "Başkasına özenen kendi özelliğini kaybeder.", ornek: "Karga kekliği taklit edeyim derken kendi yürüyüşüne şaşmış; kendin ol." },
+        { deyim: "Kedi ulaşamadığı ciğere murdar der", anlam: "Elden edemediğimiz şeyi kötüleriz.", ornek: "Kedi ulaşamadığı ciğere murdar der; o arabayı beğenmiyorsun ama alamadığın için." },
+        { deyim: "Kervan yolda düzülür", anlam: "İş yapılırken eksikler tamamlanır.", ornek: "Kervan yolda düzülür; başlayalım, sonra hallederiz." },
+        { deyim: "Kırıcının yanında ya huyundan ya suyundan", anlam: "İnsan birlikte olduğu kişiden etkilenir.", ornek: "Kırıcının yanında ya huyundan ya suyundan; kimle takılıyorsun?" },
+        { deyim: "Kızını dövmeyen dizini döver", anlam: "Çocuğu eğitmeyen sonra pişman olur.", ornek: "Kızını dövmeyen dizini döver; çocuklarına sınır koymazsan sonra üzülürsün." },
+        { deyim: "Koça boynuzu yük olmaz", anlam: "Kişi kendi sorumluluğunu taşır.", ornek: "Koça boynuzu yük olmaz; bu benim işim, ben hallederim." },
+        { deyim: "Korkak bezirgân ne kâr eder ne ziyan", anlam: "Risk almayan büyük kazanç da elde edemez.", ornek: "Korkak bezirgân ne kâr eder ne ziyan; biraz cesaret et." },
+        { deyim: "Köprüyü geçinceye kadar ayıya dayı derler", anlam: "İş bitene kadar sevmediğimiz kişiye bile iyi davranırız.", ornek: "Köprüyü geçinceye kadar ayıya dayı derler; şimdilik idare et." },
+        { deyim: "Kul sıkışmayınca Hızır yetişmez", anlam: "İnsan zora düşmeden yardım gelmez.", ornek: "Kul sıkışmayınca Hızır yetişmez; önce biraz zorlanmalısın." },
+        { deyim: "Mart kapıdan baktırır, kazma kürek yaktırır", anlam: "Mart ayında hava beklenmedik soğuyabilir.", ornek: "Mart kapıdan baktırır, kazma kürek yaktırır; montunu giy." },
+        { deyim: "Meyveli ağacı taşlarlar", anlam: "Başarılı ve değerli kişiler daha çok eleştirilir.", ornek: "Meyveli ağacı taşlarlar; başarın için kıskanılıyorsun." },
+        { deyim: "Mum dibine ışık vermez", anlam: "İnsan en yakınına fayda sağlamayabilir.", ornek: "Mum dibine ışık vermez; kendi evindekilere bile yardım etmiyor." },
+        { deyim: "Ölü evinde ağlayıcı, düğün evinde oyuncu çok olur", anlam: "İyi ya da kötü günlerde kalabalık olur ama herkes gerçek dost değildir.", ornek: "Ölü evinde ağlayıcı, düğün evinde oyuncu çok olur; dostların mı gerçek?" },
+        { deyim: "Paranın yüzü sıcaktır", anlam: "Para insanları kendine çeker.", ornek: "Paranın yüzü sıcaktır; parayı görünce herkes etrafında toplanıyor." },
+        { deyim: "Perşembenin gelişi çarşambadan bellidir", anlam: "Bir işin sonucu bazı işaretlerden anlaşılır.", ornek: "Perşembenin gelişi çarşambadan bellidir; bu işin sonucu belli oldu." },
+        { deyim: "Rüzgâr eken fırtına biçer", anlam: "Kötülük yapan daha büyük sorunlarla karşılaşır.", ornek: "Rüzgâr eken fırtına biçer; yaptıklarının cezasını çekeceksin." },
+        { deyim: "Sürüden ayrılanı kurt kapar", anlam: "Topluluktan kopan tehlikeye açık olur.", ornek: "Sürüden ayrılanı kurt kapar; yalnız kaldın şimdi." },
+        { deyim: "Şahin ile deve avlanmaz", anlam: "Her araç veya kişi her işe uygun değildir.", ornek: "Şahin ile deve avlanmaz; onu bu işe koşma." },
+        { deyim: "Tarlada izi olmayanın harmanda yüzü olmaz", anlam: "Emek vermeyen sonucu paylaşamaz.", ornek: "Tarlada izi olmayanın harmanda yüzü olmaz; çalışmadın, şimdi kazanmayı bekleme." },
+        { deyim: "Terzi kendi söküğünü dikemez", anlam: "İnsan kendi işini yapmakta zorlanabilir.", ornek: "Terzi kendi söküğünü dikemez; sen başkalarına öğüt veriyorsun da kendin yapamıyorsun." },
+        { deyim: "Tilkinin dönüp dolaşacağı yer kürkçü dükkânıdır", anlam: "Kişi sonunda alıştığı yere döner.", ornek: "Tilkinin dönüp dolaşacağı yer kürkçü dükkânıdır; yine eski işine döndü." },
+        { deyim: "Tok iken yemek yiyen, mezarını dişiyle kazar", anlam: "Aşırı yemek sağlığa zararlıdır.", ornek: "Tok iken yemek yiyen, mezarını dişiyle kazar; biraz dur." },
+        { deyim: "Ulu sözü dinlemeyen ulur kalır", anlam: "Büyüklerin sözünü dinlemeyen pişman olur.", ornek: "Ulu sözü dinlemeyen ulur kalır; dediklerimi yapmadın işte." },
+        { deyim: "Yatan aslandan gezen tilki yeğdir", anlam: "Güçlü olup tembel durmaktan, zayıf da olsa çalışmak iyidir.", ornek: "Yatan aslandan gezen tilki yeğdir; boş durma, hareket et." },
+        { deyim: "Zenginin malı züğürdün çenesini yorar", anlam: "Fakir kişi zengin malı hakkında konuşur ama bundan fayda görmez.", ornek: "Zenginin malı züğürdün çenesini yorar; boş konuşma, kendi işine bak." },
+        { deyim: "Ağaç yaşken eğilir", anlam: "İnsan küçük yaşta daha kolay yetiştirilir.", ornek: "Ağaç yaşken eğilir; çocukları küçükken terbiye etmeli." },
+        { deyim: "Akçe kara gün içindir", anlam: "Birikim zor zamanlarda işe yarar.", ornek: "Akçe kara gün içindir; biraz kenara koy." },
+        { deyim: "Ayağını yorganına göre uzat", anlam: "Harcamalarını gelirine göre yap.", ornek: "Ayağını yorganına göre uzat; borca girme." },
+        { deyim: "Damlaya damlaya göl olur", anlam: "Küçük birikimler büyür.", ornek: "Damlaya damlaya göl olur; biraz biraz kenara koy." },
+        { deyim: "Sakla samanı gelir zamanı", anlam: "Değersiz görünen şey bir gün işe yarar.", ornek: "Sakla samanı gelir zamanı; bunları atma." },
+        { deyim: "İşleyen demir pas tutmaz", anlam: "Çalışan kişi gelişir ve değer kazanır.", ornek: "İşleyen demir pas tutmaz; hep meşgul ol." },
+        { deyim: "Emek olmadan yemek olmaz", anlam: "Kazanmak için çalışmak gerekir.", ornek: "Emek olmadan yemek olmaz; çalışmadan olmaz." },
+        { deyim: "Ne ekersen onu biçersin", anlam: "İnsan yaptıklarının sonucunu yaşar.", ornek: "Ne ekersen onu biçersin; iyilik yap, iyilik bul." },
+        { deyim: "Bugünün işini yarına bırakma", anlam: "İşler zamanında yapılmalıdır.", ornek: "Bugünün işini yarına bırakma; hemen yap." },
+        { deyim: "Erken kalkan yol alır", anlam: "İşe erken başlayan daha başarılı olur.", ornek: "Erken kalkan yol alır; herkesten önce başla." },
+        { deyim: "Bir elin nesi var iki elin sesi var", anlam: "Birlikte yapılan iş daha kolay olur.", ornek: "Bir elin nesi var iki elin sesi var; beraber yapalım." },
+        { deyim: "Birlikten kuvvet doğar", anlam: "İnsanlar birleşirse güçlü olur.", ornek: "Birlikten kuvvet doğar; hep birlikte başarırız." },
+        { deyim: "Yalnız taş duvar olmaz", anlam: "Tek başına iş başarılmaz.", ornek: "Yalnız taş duvar olmaz; yardım iste." },
+        { deyim: "Komşu komşunun külüne muhtaçtır", anlam: "İnsanların birbirine ihtiyacı vardır.", ornek: "Komşu komşunun külüne muhtaçtır; bir gün sana da lazım olur." },
+        { deyim: "Ev alma komşu al", anlam: "İyi komşu iyi evden önemlidir.", ornek: "Ev alma komşu al; komşun çok önemli." },
+        { deyim: "Dost kara günde belli olur", anlam: "Gerçek dost zor zamanda anlaşılır.", ornek: "Dost kara günde belli olur; başına bir iş gelince kim geldi?" },
+        { deyim: "Dost acı söyler", anlam: "Gerçek dost yanlışları dürüstçe söyler.", ornek: "Dost acı söyler; söylediklerine kızma." },
+        { deyim: "Arkadaşını söyle sana kim olduğunu söyleyeyim", anlam: "İnsan arkadaşlarından tanınır.", ornek: "Arkadaşını söyle sana kim olduğunu söyleyeyim; kiminle takılıyorsun?" },
+        { deyim: "Üzüm üzüme baka baka kararır", anlam: "İnsan çevresindekilere benzer.", ornek: "Üzüm üzüme baka baka kararır; ona bakma sen de öyle olursun." },
+        { deyim: "Körle yatan şaşı kalkar", anlam: "Kötü kişilerle birlikte olan huylarını alır.", ornek: "Körle yatan şaşı kalkar; sakın onlarla takılma." },
+        { deyim: "Tatlı dil yılanı deliğinden çıkarır", anlam: "Güzel söz zor işleri yaptırır.", ornek: "Tatlı dil yılanı deliğinden çıkarır; nazik konuş, işini gör." },
+        { deyim: "Söz gümüşse sükût altındır", anlam: "Bazen susmak konuşmaktan daha değerlidir.", ornek: "Söz gümüşse sükût altındır; şimdi susman lazım." },
+        { deyim: "İki dinle bir söyle", anlam: "Konuşmadan önce iyi dinle.", ornek: "İki dinle bir söyle; acele etme." },
+        { deyim: "Boş teneke çok ses çıkarır", anlam: "Bilgisiz kişiler çok konuşur.", ornek: "Boş teneke çok ses çıkarır; o çok konuşuyor ama bir şey bilmiyor." },
+        { deyim: "Bülbülün çektiği dil belasıdır", anlam: "İnsan sözleri yüzünden sıkıntı yaşar.", ornek: "Bülbülün çektiği dil belasıdır; söylediklerine dikkat et." },
+        { deyim: "Dil yarası kılıç yarasından ağırdır", anlam: "Kırıcı sözler derin iz bırakır.", ornek: "Dil yarası kılıç yarasından ağırdır; ne dediğine bak." },
+        { deyim: "Söz uçar yazı kalır", anlam: "Yazılı söz daha kalıcıdır.", ornek: "Söz uçar yazı kalır; her şeyi yaz." },
+        { deyim: "Acele işe şeytan karışır", anlam: "Acele yapılan işte hata olur.", ornek: "Acele işe şeytan karışır; acele etme." },
+        { deyim: "Acele giden ecele gider", anlam: "Gereksiz acele tehlikeye yol açar.", ornek: "Acele giden ecele gider; yavaş ol." },
+        { deyim: "Sabreden derviş muradına ermiş", anlam: "Sabırlı olan sonunda amacına ulaşır.", ornek: "Sabreden derviş muradına ermiş; sabret, kazanacaksın." },
+        { deyim: "Sabır acıdır meyvesi tatlıdır", anlam: "Sabretmek zordur ama sonucu güzeldir.", ornek: "Sabır acıdır meyvesi tatlıdır; dayan, sonra güzel olacak." },
+        { deyim: "Öfkeyle kalkan zararla oturur", anlam: "Sinirle yapılan iş kötü sonuçlar doğurur.", ornek: "Öfkeyle kalkan zararla oturur; sakin ol." },
+        { deyim: "Az veren candan, çok veren maldan", anlam: "Küçük yardım da samimiyse değerlidir.", ornek: "Az veren candan, çok veren maldan; önemli olan niyet." },
+        { deyim: "Azıcık aşım kaygısız başım", anlam: "Azla yetinmek insanı rahat ettirir.", ornek: "Azıcık aşım kaygısız başım; ne kadar rahatsın." },
+        { deyim: "Kanaat en büyük zenginliktir", anlam: "Elindekiyle yetinmek huzur verir.", ornek: "Kanaat en büyük zenginliktir; şükret." },
+        { deyim: "Parayı veren düdüğü çalar", anlam: "Bir işte bedeli ödeyen söz sahibi olur.", ornek: "Parayı veren düdüğü çalar; sen karar ver." },
+        { deyim: "Ucuz etin yahnisi yavan olur", anlam: "Çok ucuz şeyler genelde kalitesizdir.", ornek: "Ucuz etin yahnisi yavan olur; kalite önemli." },
+        { deyim: "Akıl akıldan üstündür", anlam: "Başkalarının fikri daha iyi olabilir.", ornek: "Akıl akıldan üstündür; başkalarına da danış." },
+        { deyim: "Danışan dağı aşmış, danışmayan düz yolda şaşmış", anlam: "Fikir alan kişi daha kolay başarıya ulaşır.", ornek: "Danışan dağı aşmış, danışmayan düz yolda şaşmış; akıl danış." },
+        { deyim: "Bin bilsen de bir bilene danış", anlam: "Çok bilen de başkasına danışmalıdır.", ornek: "Bin bilsen de bir bilene danış; akıl akıldan üstündür." },
+        { deyim: "Akıllı düşman akılsız dosttan iyidir", anlam: "Bilinçsiz dost insana zarar verebilir.", ornek: "Akıllı düşman akılsız dosttan iyidir; dostunu iyi seç." },
+        { deyim: "Cahile söz anlatmak deveye hendek atlatmaktan zordur", anlam: "Anlamak istemeyene öğüt vermek zordur.", ornek: "Cahile söz anlatmak deveye hendek atlatmaktan zordur; boşuna uğraşma." },
+        { deyim: "Can çıkar huy çıkmaz", anlam: "Yerleşmiş huylar zor değişir.", ornek: "Can çıkar huy çıkmaz; o hep böyleydi." },
+        { deyim: "Kurt kocayınca köpeğin maskarası olur", anlam: "Güçten düşen kişi eski saygıyı görmez.", ornek: "Kurt kocayınca köpeğin maskarası olur; eski gücün kalmadı." },
+        { deyim: "Kurt dumanlı havayı sever", anlam: "Kötü niyetli kişiler karışıklıktan yararlanır.", ornek: "Kurt dumanlı havayı sever; o ortamda rahat ediyor." },
+        { deyim: "Balık baştan kokar", anlam: "Bozulma en baştan başlar.", ornek: "Balık baştan kokar; orada işler bozuk." },
+        { deyim: "Sahibine göre kişner at", anlam: "Bir işi yöneten kişiye göre şekillenir.", ornek: "Sahibine göre kişner at; işler patrona göre değişir." },
+        { deyim: "Aslan yattığı yerden belli olur", anlam: "İnsan yaşadığı yerden belli olur.", ornek: "Aslan yattığı yerden belli olur; evine bak, kim olduğunu anla." },
+        { deyim: "Kişi arkadaşından bellidir", anlam: "İnsan çevresine bakılarak tanınır.", ornek: "Kişi arkadaşından bellidir; kiminle geziyorsun?" },
+        { deyim: "İyilik eden iyilik bulur", anlam: "İyi davranan iyilik görür.", ornek: "İyilik eden iyilik bulur; yardım et." },
+        { deyim: "Kötülük eden kötülük bulur", anlam: "Kötülük sahibine döner.", ornek: "Kötülük eden kötülük bulur; yaptığın sana döner." },
+        { deyim: "Eden bulur", anlam: "İnsan yaptıklarının karşılığını alır.", ornek: "Eden bulur; merak etme." },
+        { deyim: "Alma mazlumun ahını, çıkar aheste aheste", anlam: "Haksızlık yapan sonunda cezasını görür.", ornek: "Alma mazlumun ahını, çıkar aheste aheste; dikkat et." },
+        { deyim: "Her koyun kendi ağzından asılır", anlam: "Herkes kendi yaptıklarından sorumludur.", ornek: "Her koyun kendi ağzından asılır; kendi söylediklerinden sorumlusun." },
+        { deyim: "Görünen köy kılavuz istemez", anlam: "Açıkça belli olan şey için açıklama gerekmez.", ornek: "Görünen köy kılavuz istemez; ortada işte." },
+        { deyim: "Yalancının mumu yatsıya kadar yanar", anlam: "Yalan kısa sürede ortaya çıkar.", ornek: "Yalancının mumu yatsıya kadar yanar; her şey ortaya çıkar." },
+        { deyim: "Doğru söyleyeni dokuz köyden kovarlar", anlam: "Doğruları söyleyen bazen tepki görür.", ornek: "Doğru söyleyeni dokuz köyden kovarlar; doğruyu söylemek zor." },
+        { deyim: "Eğri otur doğru konuş", anlam: "Dürüst olmak gerekir.", ornek: "Eğri otur doğru konuş; ne var ne yok söyle." },
+        { deyim: "Doğru duvar yıkılmaz", anlam: "Dürüst ve sağlam olan kolay zarar görmez.", ornek: "Doğru duvar yıkılmaz; dürüst ol." },
+        { deyim: "Hak yerini bulur", anlam: "Adalet sonunda gerçekleşir.", ornek: "Hak yerini bulur; merak etme." },
+        { deyim: "Aç ayı oynamaz", anlam: "Aç insandan verim beklenmez.", ornek: "Aç ayı oynamaz; önce yemek yedir." },
+        { deyim: "Aç kendini tavuk buğday ambarında sanır", anlam: "Yoksunluk çeken kişi hayal kurar.", ornek: "Aç kendini tavuk buğday ambarında sanır; hayal kurma." },
+        { deyim: "Tok açın halinden anlamaz", anlam: "Rahat olan sıkıntıyı anlamaz.", ornek: "Tok açın halinden anlamaz; o bize ne bilir." },
+        { deyim: "Aç ne yemez, tok ne demez", anlam: "Zor durumda olan her şeye razı olur, rahat olan kolay konuşur.", ornek: "Aç ne yemez, tok ne demez; şükret." },
+        { deyim: "İt ürür kervan yürür", anlam: "Eleştiriler olsa da doğru iş devam eder.", ornek: "İt ürür kervan yürür; bırak konuşsunlar." },
+        { deyim: "Havlayan köpek ısırmaz", anlam: "Çok tehdit eden genelde zarar vermez.", ornek: "Havlayan köpek ısırmaz; o sadece konuşuyor." },
+        { deyim: "Ölenle ölünmez, yiğit ölür şan kalır", anlam: "İnsan ölür ama güzel işleri hatırlanır.", ornek: "Ölenle ölünmez, yiğit ölür şan kalır; iyi şeyler bırak." },
+        { deyim: "Yiğit düştüğü yerden kalkar", anlam: "İnsan yeniden başlamalıdır.", ornek: "Yiğit düştüğü yerden kalkar; pes etme." },
+        { deyim: "Taşıma su ile değirmen dönmez", anlam: "Geçici çözümlerle iş yürütülemez.", ornek: "Taşıma su ile değirmen dönmez; kalıcı çözüm bul." },
+        { deyim: "Su akar yolunu bulur", anlam: "İşler doğal olarak çözüme ulaşır.", ornek: "Su akar yolunu bulur; zamanla her şey hallolur." },
+        { deyim: "Akan su yosun tutmaz", anlam: "Hareketli ve çalışan insan körelmez.", ornek: "Akan su yosun tutmaz; hep hareket halinde ol." },
+        { deyim: "Denize düşen yılana sarılır", anlam: "Zor durumda kalan kişi her yardımı kabul eder.", ornek: "Denize düşen yılana sarılır; canın ne isterse yap." },
+        { deyim: "Düşenin dostu olmaz", anlam: "Güçsüz kalanı herkes desteklemez.", ornek: "Düşenin dostu olmaz; gücünü koru." },
+        { deyim: "Zararın neresinden dönülse kârdır", anlam: "Yanlıştan ne kadar erken dönülürse o kadar iyidir.", ornek: "Zararın neresinden dönülse kârdır; vazgeç." },
+        { deyim: "Her işte bir hayır vardır", anlam: "Kötü görünen olayın iyi bir sonucu olabilir.", ornek: "Her işte bir hayır vardır; belki iyi olmuştur." },
+        { deyim: "Gülme komşuna gelir başına", anlam: "Başkasının durumuyla alay etme.", ornek: "Gülme komşuna gelir başına; sakın." },
+        { deyim: "Ne oldum dememeli ne olacağım demeli", anlam: "İnsanın koşulları değişebilir.", ornek: "Ne oldum dememeli ne olacağım demeli; mütevazı ol." },
+        { deyim: "Bugün bana ise yarın sana", anlam: "Kişilerin koşulları değişebilir.", ornek: "Bugün bana ise yarın sana; şikayet etme." },
+        { deyim: "İyilik yap denize at, balık bilmezse Halik bilir", anlam: "İyilik karşılık beklemeden yapılmalıdır.", ornek: "İyilik yap denize at, balık bilmezse Halik bilir; karşılık bekleme." },
+        { deyim: "El elden üstündür", anlam: "Her zaman daha iyisi vardır.", ornek: "El elden üstündür; daha iyisini bulursun." },
+        { deyim: "El el ile, değirmen yel ile", anlam: "İnsan yardımı ile iş başarılır.", ornek: "El el ile, değirmen yel ile; yardım edin." },
+        { deyim: "Elin ağzı torba değil ki büzesin", anlam: "İnsanların konuşmasını engellemek zordur.", ornek: "Elin ağzı torba değil ki büzesin; ne derlerse desinler." },
+        { deyim: "El için kuyu kazan evvela kendi düşer", anlam: "Başkasına kötülük yapan kendi zararını görür.", ornek: "El için kuyu kazan evvela kendi düşer; sakın." },
+        { deyim: "Ateş olmayan yerden duman çıkmaz", anlam: "Söylentilerin bir nedeni vardır.", ornek: "Ateş olmayan yerden duman çıkmaz; bir şey var." },
+        { deyim: "Ateşin düştüğü yeri yakar", anlam: "Acıyı en çok yaşayan bilir.", ornek: "Ateşin düştüğü yeri yakar; o ne çektiğini bilir." },
+        { deyim: "Güneş balçıkla sıvanmaz", anlam: "Gerçekler gizlenemez.", ornek: "Güneş balçıkla sıvanmaz; her şey ortaya çıkar." },
+        { deyim: "Korkunun ecele faydası yoktur", anlam: "Korkmak sonucu değiştirmez.", ornek: "Korkunun ecele faydası yoktur; korkma." },
+        { deyim: "İğneyi kendine, çuvaldızı başkasına batır", anlam: "Eleştirmeden önce kendini düşün.", ornek: "İğneyi kendine, çuvaldızı başkasına batır; önce kendini eleştir." },
+        { deyim: "Lafla peynir gemisi yürümez", anlam: "Sadece konuşmakla iş bitmez.", ornek: "Lafla peynir gemisi yürümez; harekete geç." }
+    ];
+
+    // ─── OYUN DURUMU ────────────────────────────────────────────────
+    let setSoru = [];
+    let indeks = 0;
+    let puan = 0;
+    let cevapVerildi = false;
+    let zamanlayici = null;
+    const SET_ADET = 10;
+
+    // ─── SES & EFEKT ──────────────────────────────────────────────────
+    let alkisCtx = null;
+    function alkisCal() {
+        try {
+            alkisCtx = alkisCtx || new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = alkisCtx;
+            if (ctx.state === 'suspended') ctx.resume();
+            const dur = 1.1;
+            const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) {
+                const t = i / data.length;
+                const env = Math.sin(Math.PI * t) * (1 - t * 0.3);
+                const clap = (Math.random() * 2 - 1) * (Math.random() < 0.06 ? 1 : 0.25);
+                data[i] = clap * env * 0.5;
+            }
+            const src = ctx.createBufferSource();
+            src.buffer = buf;
+            const filt = ctx.createBiquadFilter();
+            filt.type = 'bandpass'; filt.frequency.value = 1800; filt.Q.value = 0.7;
+            const gain = ctx.createGain(); gain.gain.value = 0.9;
+            src.connect(filt); filt.connect(gain); gain.connect(ctx.destination);
+            src.start();
+        } catch (e) { /* sessiz */ }
+    }
+
+    function efektGoster(tur) {
+        const wrap = document.createElement('div');
+        wrap.className = 'efect-container';
+        document.body.appendChild(wrap);
+
+        if (tur === 'confetti') {
+            const renkler = ['#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1', '#ff85a2', '#ffb347', '#a8e6cf'];
+            for (let i = 0; i < 60; i++) {
+                const p = document.createElement('div');
+                p.className = 'efect-piece confetti';
+                const left = 5 + Math.random() * 90;
+                const size = 6 + Math.random() * 10;
+                const color = renkler[Math.floor(Math.random() * renkler.length)];
+                const delay = Math.random() * 0.3;
+                const rot = Math.random() * 360;
+                const dur = 1.4 + Math.random() * 1.2;
+                p.style.cssText = `
+                    left: ${left}%;
+                    width: ${size}px;
+                    height: ${size * (0.4 + Math.random() * 0.6)}px;
+                    background: ${color};
+                    border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+                    animation-delay: ${delay}s;
+                    animation-duration: ${dur}s;
+                    transform: rotate(${rot}deg);
+                `;
+                wrap.appendChild(p);
+            }
+            setTimeout(() => wrap.remove(), 3000);
+        } else {
+            // üzülme efekti
+            const emojiler = ['😢', '😔', '💔', '😕', '😞', '☹️', '😟'];
+            const emoji = emojiler[Math.floor(Math.random() * emojiler.length)];
+            for (let i = 0; i < 8; i++) {
+                const p = document.createElement('div');
+                p.className = 'efect-piece sad';
+                p.textContent = emoji;
+                const left = 10 + Math.random() * 80;
+                const delay = Math.random() * 0.4;
+                const dur = 1.5 + Math.random() * 0.8;
+                p.style.cssText = `
+                    left: ${left}%;
+                    top: ${15 + Math.random() * 30}%;
+                    animation-delay: ${delay}s;
+                    animation-duration: ${dur}s;
+                    font-size: ${2.5 + Math.random() * 2}rem;
+                `;
+                wrap.appendChild(p);
+            }
+            setTimeout(() => wrap.remove(), 2800);
+        }
+    }
+
+    function kutla() {
+        alkisCal();
+        efektGoster('confetti');
+    }
+
+    function uzul() {
+        efektGoster('sad');
+    }
+
+    function karistir(dizi) {
+        const k = [...dizi];
+        for (let i = k.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [k[i], k[j]] = [k[j], k[i]];
+        }
+        return k;
+    }
+
+    function setOlustur() {
+        const hepsi = [...ATASOZLERI];
+        const secilen = karistir(hepsi).slice(0, SET_ADET);
+        return secilen.map(s => {
+            const diger = ATASOZLERI.filter(d => d.deyim !== s.deyim).map(d => d.deyim);
+            const yanlis = karistir(diger).slice(0, 2);
+            const secenekler = karistir([s.deyim, ...yanlis]);
+            return {
+                deyim: s.deyim,
+                anlam: s.anlam,
+                ornek: s.ornek,
+                secenekler: secenekler
+            };
+        });
+    }
+
+    function render() {
+        clearTimeout(zamanlayici);
+        if (indeks >= setSoru.length) {
+            document.getElementById('geriBildirim').textContent = '🎉 Set tamamlandı! Yeni Set ile devam edin.';
+            document.getElementById('sonrakiBtn').disabled = true;
+            document.getElementById('sesBtn').disabled = true;
+            return;
+        }
+
+        const soru = setSoru[indeks];
+        document.getElementById('soruNo').textContent = indeks + 1;
+        document.getElementById('toplamSoru').textContent = SET_ADET;
+        document.getElementById('anlamMetin').textContent = soru.anlam;
+        document.getElementById('ornekMetin').textContent = '“' + soru.ornek + '”';
+
+        const kutu = document.getElementById('secenekKutu');
+        kutu.innerHTML = '';
+        soru.secenekler.forEach(sec => {
+            const btn = document.createElement('button');
+            btn.className = 'sec-btn';
+            btn.textContent = sec;
+            btn.addEventListener('click', () => cevapKontrol(sec));
+            kutu.appendChild(btn);
+        });
+
+        document.getElementById('geriBildirim').textContent = '💡 Bir seçenek seçin';
+        cevapVerildi = false;
+        document.getElementById('sonrakiBtn').disabled = false;
+        document.getElementById('sesBtn').disabled = false;
+    }
+
+    function cevapKontrol(secim) {
+        if (cevapVerildi) return;
+        cevapVerildi = true;
+        const soru = setSoru[indeks];
+        const dogru = secim === soru.deyim;
+
+        const butonlar = document.querySelectorAll('.sec-btn');
+        
+        if (dogru) {
+            puan++;
+            document.getElementById('puan').textContent = puan;
+            document.getElementById('geriBildirim').textContent = '✅ Doğru! +1 puan';
+            // doğru cevabı yeşil yap
+            butonlar.forEach(b => {
+                if (b.textContent === soru.deyim) {
+                    b.classList.add('dogru');
+                }
+                b.disabled = true;
+            });
+            kutla();
+        } else {
+            document.getElementById('geriBildirim').textContent = '❌ Yanlış! Doğru: ' + soru.deyim;
+            butonlar.forEach(b => {
+                b.disabled = true;
+                if (b.textContent === soru.deyim) {
+                    b.classList.add('dogru');
+                } else if (b.textContent === secim) {
+                    b.classList.add('yanlis');
+                }
+            });
+            uzul();
+        }
+
+        zamanlayici = setTimeout(ileri, 1800);
+    }
+
+    function ileri() {
+        if (!cevapVerildi) {
+            document.getElementById('geriBildirim').textContent = '⚠️ Önce cevap seçin!';
+            return;
+        }
+        indeks++;
+        render();
+    }
+
+    let ses = null;
+    function sesOku(anlam, ornek) {
+        if (!window.speechSynthesis) return;
+        const metin = `Açıklama: ${anlam}. Örnek: ${ornek}`;
+        if (ses) {
+            speechSynthesis.cancel();
+        }
+        const u = new SpeechSynthesisUtterance(metin);
+        u.lang = 'tr-TR';
+        u.rate = 0.8;
+        u.pitch = 1;
+        speechSynthesis.speak(u);
+    }
+
+    function sifirla() {
+        clearTimeout(zamanlayici);
+        speechSynthesis.cancel();
+        setSoru = setOlustur();
+        indeks = 0;
+        puan = 0;
+        cevapVerildi = false;
+        document.getElementById('puan').textContent = '0';
+        render();
+    }
+
+    document.getElementById('sonrakiBtn').addEventListener('click', ileri);
+    document.getElementById('sifirlaBtn').addEventListener('click', sifirla);
+    document.getElementById('sesBtn').addEventListener('click', () => {
+        if (indeks < setSoru.length) {
+            const s = setSoru[indeks];
+            sesOku(s.anlam, s.ornek);
+        }
+    });
+
+    setSoru = setOlustur();
+    render();
+</script>
+
+</body>
+</html>
